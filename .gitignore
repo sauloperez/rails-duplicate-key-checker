@@ -7,3 +7,15 @@
 /pkg/
 /spec/reports/
 /tmp/
+bin/bundler
+bin/erubis
+bin/htmldiff
+bin/ldiff
+bin/rackup
+bin/rails
+bin/rdoc
+bin/ri
+bin/sprockets
+bin/thor
+bin/tilt
+bin/tt
