@@ -32,5 +32,23 @@ describe RailsDuplicateKeyChecker::TableScanner do
   end
 
   describe '#alter_table_statements' do
+    subject { table_scanner.alter_table_statements }
+
+    let(:drop_index_statements) do
+      instance_double(RailsDuplicateKeyChecker::DropIndexStatements)
+    end
+
+    before do
+      allow(RailsDuplicateKeyChecker::DropIndexStatements)
+        .to receive(:new).with('command output').and_return(drop_index_statements)
+    end
+
+    before do
+      allow(Kernel)
+        .to receive(:system).with('pt-duplicate-key-checker').and_return('command output')
+      table_scanner.scan
+    end
+
+    it { is_expected.to eq(drop_index_statements) }
   end
 end

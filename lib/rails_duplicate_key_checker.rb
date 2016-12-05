@@ -3,11 +3,14 @@ require 'rails_duplicate_key_checker/migration_generator'
 require 'active_record'
 
 module RailsDuplicateKeyChecker
+  class DropIndexStatements
+    def initialize(raw_statements)
+      @raw_statements = raw_statements
+    end
+  end
+
   class TableScanner
     class InvalidScanError < StandardError; end
-
-    def initialize(*args)
-    end
 
     def scan
       @command_output = Kernel.system('pt-duplicate-key-checker')
@@ -15,10 +18,12 @@ module RailsDuplicateKeyChecker
     end
 
     def alter_table_statements
+      DropIndexStatements.new(command_output)
     end
 
     private
 
+    attr_reader :command_output
   end
 
   class Checker
