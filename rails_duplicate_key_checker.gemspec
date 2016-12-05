@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'rails-duplicate-key-checker-version'
+require 'rails_duplicate_key_checker/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rails-duplicate-key-checker"
-  spec.version       = Rails::Duplicate::Key::Checker::VERSION
+  spec.version       = RailsDuplicateKeyChecker::VERSION
   spec.authors       = ["Pau Perez"]
   spec.email         = ["saulopefa@gmail.com"]
 
@@ -29,6 +29,9 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_runtime_dependency 'rails', '~> 3.2.22'
+  spec.add_runtime_dependency 'mysql2', '0.3.20'
 
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
