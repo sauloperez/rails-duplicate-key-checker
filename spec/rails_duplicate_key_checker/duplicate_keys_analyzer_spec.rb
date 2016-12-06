@@ -19,7 +19,7 @@ module RailsDuplicateKeyChecker
       before do
         allow(Kernel)
           .to receive(:system)
-          .with('pt-duplicate-key-checker')
+          .with('pt-duplicate-key-checker D=teambox_development -u root')
           .and_return('command output')
       end
 
