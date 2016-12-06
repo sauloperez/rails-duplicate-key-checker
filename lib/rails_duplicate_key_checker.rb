@@ -9,7 +9,7 @@ module RailsDuplicateKeyChecker
     end
   end
 
-  class TableScanner
+  class DuplicateKeysAnalyzer
     class InvalidScanError < StandardError; end
 
     def scan
@@ -27,22 +27,18 @@ module RailsDuplicateKeyChecker
   end
 
   class Checker
-    def initialize(table_scanner = TableScanner.new)
-      @table_scanner = table_scanner
+    def initialize(analyzer = DuplicateKeysAnalyzer.new)
+      @analyzer = analyzer
     end
 
     def run
-      scan_for_duplicate_keys
+      analyzer.scan
       generate_migrations
     end
 
     private
 
-    attr_reader :table_scanner
-
-    def scan_for_duplicate_keys
-      table_scanner.scan
-    end
+    attr_reader :analyzer
 
     def generate_migrations
     end
