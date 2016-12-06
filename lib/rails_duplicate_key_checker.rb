@@ -12,18 +12,17 @@ module RailsDuplicateKeyChecker
   class DuplicateKeysAnalyzer
     class InvalidScanError < StandardError; end
 
-    def scan
-      @command_output = Kernel.system('pt-duplicate-key-checker')
-      raise InvalidScanError unless $?.exitstatus.zero?
-    end
-
     def alter_table_statements
-      DropIndexStatements.new(command_output)
+      @alter_table_statements ||= DropIndexStatements.new(command_output)
     end
 
     private
 
-    attr_reader :command_output
+    def command_output
+      output = Kernel.system('pt-duplicate-key-checker')
+      raise InvalidScanError unless $?.exitstatus.zero?
+      output
+    end
   end
 
   class Checker

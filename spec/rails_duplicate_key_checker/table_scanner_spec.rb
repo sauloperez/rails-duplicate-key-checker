@@ -2,38 +2,10 @@ require 'spec_helper'
 
 module RailsDuplicateKeyChecker
   describe DuplicateKeysAnalyzer do
-    let(:table_scanner) { described_class.new }
-
-    describe '#scan' do
-      before do
-        allow(Kernel).to receive(:system).with('pt-duplicate-key-checker')
-      end
-
-      context 'when the pt-duplicate-key-checker command is successful' do
-        before do
-          allow($?).to receive(:exitstatus).and_return(0)
-        end
-
-        it 'raises a InvalidScanError' do
-          expect { table_scanner.scan }
-            .not_to raise_error(DuplicateKeysAnalyzer::InvalidScanError)
-        end
-      end
-
-      context 'when the pt-duplicate-key-checker command is unsuccessful' do
-        before do
-          allow($?).to receive(:exitstatus).and_return(-1)
-        end
-
-        it 'raises a InvalidScanError' do
-          expect { table_scanner.scan }
-            .to raise_error(DuplicateKeysAnalyzer::InvalidScanError)
-        end
-      end
-    end
+    let(:duplicate_keys_analyzer) { described_class.new }
 
     describe '#alter_table_statements' do
-      subject { table_scanner.alter_table_statements }
+      subject { duplicate_keys_analyzer.alter_table_statements }
 
       let(:drop_index_statements) do
         instance_double(DropIndexStatements)
@@ -46,11 +18,36 @@ module RailsDuplicateKeyChecker
 
       before do
         allow(Kernel)
-          .to receive(:system).with('pt-duplicate-key-checker').and_return('command output')
-        table_scanner.scan
+          .to receive(:system)
+          .with('pt-duplicate-key-checker')
+          .and_return('command output')
       end
 
-      it { is_expected.to eq(drop_index_statements) }
+      context 'when the pt-duplicate-key-checker command is successful' do
+        before do
+          allow($?).to receive(:exitstatus).and_return(0)
+        end
+
+        it 'raises a InvalidScanError' do
+          expect { duplicate_keys_analyzer.scan }
+            .not_to raise_error(DuplicateKeysAnalyzer::InvalidScanError)
+        end
+
+        it 'returns drop index statements' do
+          expect(duplicate_keys_analyzer.alter_table_statements).to eq(drop_index_statements)
+        end
+      end
+
+      context 'when the pt-duplicate-key-checker command is unsuccessful' do
+        before do
+          allow($?).to receive(:exitstatus).and_return(-1)
+        end
+
+        it 'raises a InvalidScanError' do
+          expect { duplicate_keys_analyzer.alter_table_statements }
+            .to raise_error(DuplicateKeysAnalyzer::InvalidScanError)
+        end
+      end
     end
   end
 end
