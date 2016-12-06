@@ -1,4 +1,5 @@
 require 'rails_duplicate_key_checker/drop_index_statements'
+require 'rails_duplicate_key_checker/backend'
 
 module RailsDuplicateKeyChecker
   class DuplicateKeysAnalyzer
@@ -11,9 +12,13 @@ module RailsDuplicateKeyChecker
     private
 
     def command_output
-      output = Kernel.system('pt-duplicate-key-checker')
-      raise InvalidScanError unless $?.exitstatus.zero?
+      output = backend.run
+      raise InvalidScanError unless backend.success?
       output
+    end
+
+    def backend
+      Backend.new('teambox_development', 'root')
     end
   end
 end
