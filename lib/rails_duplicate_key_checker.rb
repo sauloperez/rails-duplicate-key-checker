@@ -10,15 +10,15 @@ module RailsDuplicateKeyChecker
     end
 
     def run
-      analyzer.scan
-      generate_migrations
+      alter_table_statements = analyzer.alter_table_statements
+      generate_migrations(alter_table_statements)
     end
 
     private
 
     attr_reader :analyzer
 
-    def generate_migrations
+    def generate_migrations(statements)
     end
   end
 end

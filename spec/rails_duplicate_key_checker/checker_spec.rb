@@ -1,13 +1,18 @@
 require 'spec_helper'
 
 describe RailsDuplicateKeyChecker::Checker do
-  let(:checker) { described_class.new(table_scanner) }
+  let(:checker) { described_class.new(analyzer) }
+  let(:alter_table_statements) do
+    double(RailsDuplicateKeyChecker::DropIndexStatements)
+  end
 
   describe '#run' do
-    let(:table_scanner) { double(:table_scanner, scan: true) }
+    let(:analyzer) do
+      double(:analyzer, alter_table_statements: alter_table_statements)
+    end
 
-    it 'runs the command to scan the tables' do
-      expect(table_scanner).to receive(:scan)
+    it 'calls the analyzer' do
+      expect(analyzer).to receive(:alter_table_statements)
       checker.run
     end
   end
