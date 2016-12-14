@@ -5,7 +5,7 @@ module RailsDuplicateKeyChecker
     end
 
     def run
-      alter_table_statements = analyzer.alter_table_statements.parse
+      alter_table_statements = analyzer.alter_table_statements
       generate_migrations(alter_table_statements)
       nil
     end

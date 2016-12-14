@@ -6,7 +6,7 @@ module RailsDuplicateKeyChecker
     class InvalidScanError < StandardError; end
 
     def alter_table_statements
-      @alter_table_statements ||= DropIndexStatements.new(command_output)
+      @alter_table_statements ||= DropIndexStatements.new(command_output).parse
     end
 
     private

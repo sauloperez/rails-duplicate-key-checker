@@ -7,13 +7,15 @@ module RailsDuplicateKeyChecker
     describe '#alter_table_statements' do
       subject { duplicate_keys_analyzer.alter_table_statements }
 
+      let(:statements) { double(:statements) }
       let(:drop_index_statements) do
-        instance_double(DropIndexStatements)
+        instance_double(DropIndexStatements, parse: statements)
       end
 
       before do
         allow(DropIndexStatements)
-          .to receive(:new).with('command output').and_return(drop_index_statements)
+          .to receive(:new).with('command output')
+          .and_return(drop_index_statements)
       end
 
       before do
@@ -24,17 +26,21 @@ module RailsDuplicateKeyChecker
       end
 
       context 'when the pt-duplicate-key-checker command is successful' do
-        before do
-          allow($?).to receive(:exitstatus).and_return(0)
-        end
+        before { allow($?).to receive(:exitstatus).and_return(0) }
 
         it 'raises a InvalidScanError' do
           expect { duplicate_keys_analyzer.scan }
             .not_to raise_error(DuplicateKeysAnalyzer::InvalidScanError)
         end
 
-        it 'returns drop index statements' do
-          expect(duplicate_keys_analyzer.alter_table_statements).to eq(drop_index_statements)
+        it 'calls #parse on the drop index statements' do
+          expect(drop_index_statements).to receive(:parse)
+          duplicate_keys_analyzer.alter_table_statements
+        end
+
+        it 'returns parsed drop index statements' do
+          expect(duplicate_keys_analyzer.alter_table_statements)
+            .to eq(statements)
         end
       end
 

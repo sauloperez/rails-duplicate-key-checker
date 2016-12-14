@@ -14,17 +14,8 @@ describe RailsDuplicateKeyChecker::Checker do
       )
     end
 
-    before do
-      allow(alter_table_statements).to receive(:parse)
-    end
-
     it 'calls the analyzer' do
       expect(analyzer).to receive(:alter_table_statements)
-      checker.run
-    end
-
-    it 'calls #parse on the alter table statements' do
-      expect(alter_table_statements).to receive(:parse)
       checker.run
     end
   end
