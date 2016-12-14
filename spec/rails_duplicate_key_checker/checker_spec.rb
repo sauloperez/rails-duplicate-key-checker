@@ -3,16 +3,28 @@ require 'spec_helper'
 describe RailsDuplicateKeyChecker::Checker do
   let(:checker) { described_class.new(analyzer) }
   let(:alter_table_statements) do
-    double(RailsDuplicateKeyChecker::DropIndexStatements)
+    instance_double(RailsDuplicateKeyChecker::DropIndexStatements)
   end
 
   describe '#run' do
     let(:analyzer) do
-      double(:analyzer, alter_table_statements: alter_table_statements)
+      instance_double(
+        RailsDuplicateKeyChecker::DuplicateKeysAnalyzer,
+        alter_table_statements: alter_table_statements
+      )
+    end
+
+    before do
+      allow(alter_table_statements).to receive(:parse)
     end
 
     it 'calls the analyzer' do
       expect(analyzer).to receive(:alter_table_statements)
+      checker.run
+    end
+
+    it 'calls #parse on the alter table statements' do
+      expect(alter_table_statements).to receive(:parse)
       checker.run
     end
   end

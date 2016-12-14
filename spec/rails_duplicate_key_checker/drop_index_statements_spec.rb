@@ -5,6 +5,7 @@ describe RailsDuplicateKeyChecker::DropIndexStatements do
 
   describe '#parse' do
     subject { drop_index_statements.parse }
+
     let(:raw_statements) do
       <<-OUTPUT
 # index_users_on_deleted is a left-prefix of index_users_on_deleted_and_last_activity_at
